@@ -14,5 +14,6 @@ s.connect(broker_addr)
 
 log.info("Sending quotes")
 while True:
-	s.send_multipart(["FX.USD/EUR", "42"])
+	s.send_multipart([b"FX.USD/EUR", b"42"])
+
 

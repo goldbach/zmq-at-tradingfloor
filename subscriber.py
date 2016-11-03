@@ -12,7 +12,7 @@ log.info("Connecting to %s", broker_addr)
 s.connect(broker_addr)
 
 log.info("Subscibing to everything")
-s.setsockopt(zmq.SUBSCRIBE, '')
+s.setsockopt(zmq.SUBSCRIBE, b'')
 
 while True:
 	(topic, msg) = s.recv_multipart()
