@@ -1,5 +1,10 @@
 import zmq
 import logging
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--broker', dest='broker', action='append', default=[])
+
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger()

@@ -1,20 +1,38 @@
 import zmq
 import logging
+import argparse
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger()
 
-broker_addr = "tcp://localhost:5002"
-ctx = zmq.Context()
-s = ctx.socket(zmq.SUB)
 
-log.info("Connecting to %s", broker_addr)
-s.connect(broker_addr)
+def parse():
+	parser = argparse.ArgumentParser()
+	parser.add_argument('--broker', dest='brokers', action='append', default=[])
+	args = parser.parse_args()
 
-log.info("Subscibing to everything")
-s.setsockopt(zmq.SUBSCRIBE, b'')
+	if len(args.brokers) == 0:
+		args.brokers = ["localhost:5002", ]
 
-while True:
-	(topic, msg) = s.recv_multipart()
-	log.info("Got topic %s with msg %s", topic, msg)
+	args.brokers = ["tcp://%s" % x for x in args.brokers]
+	return args
 
+
+def main(args):
+
+	ctx = zmq.Context()
+	s = ctx.socket(zmq.SUB)
+
+	for broker in args.brokers:
+		log.info("Connecting to %s", broker)
+		s.connect(broker)
+
+	log.info("Subscibing to everything")
+	s.setsockopt(zmq.SUBSCRIBE, b'')
+
+	while True:
+		topic, msg = s.recv_multipart()
+		log.info("Got topic %s with msg %s", topic, msg)
+
+if __name__ == "__main__":
+	main(parse())
