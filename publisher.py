@@ -2,23 +2,34 @@ import zmq
 import logging
 import argparse
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--broker', dest='broker', action='append', default=[])
-
-
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
 log = logging.getLogger()
 
-broker_addr = "tcp://localhost:5001"
+def parse():
+	parser = argparse.ArgumentParser()
+	parser.add_argument('--broker', dest='brokers', action='append', default=[])
+	args = parser.parse_args()
 
-ctx = zmq.Context()
-s = ctx.socket(zmq.PUSH)
+	if len(args.brokers) == 0:
+		args.brokers = ["localhost:5001", ]
 
-log.info("Connecting to %s", broker_addr)
-s.connect(broker_addr)
-
-log.info("Sending quotes")
-while True:
-	s.send_multipart([b"FX.USD/EUR", b"42"])
+	args.brokers = ["tcp://%s" % x for x in args.brokers]
+	return args
 
 
+def main(args):
+
+	ctx = zmq.Context()
+	s = ctx.socket(zmq.PUSH)
+
+	for broker in args.brokers:
+		log.info("Connecting to %s", broker)
+		s.connect(broker)
+
+	log.info("Sending quotes")
+	while True:
+		s.send_multipart([b"FX.USD/EUR", b"0.95"])
+
+
+if __name__ == "__main__":
+	main(parse())

@@ -2,7 +2,7 @@ import zmq
 import logging
 import argparse
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
 log = logging.getLogger()
 
 

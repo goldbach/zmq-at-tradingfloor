@@ -3,7 +3,7 @@ import logging
 import argparse
 
 log = logging.getLogger()
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--in-port', dest='in_port', type=int, default=5001)
